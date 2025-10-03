@@ -1,0 +1,28 @@
+# Node
+node_modules/
+dist/
+build/
+
+# Logs
+*.log
+logs/
+
+# Env files
+.env
+*.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# React Native
+android/
+ios/
+*.keystore
+
+# Coverage
+coverage/
