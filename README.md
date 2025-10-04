@@ -24,7 +24,3 @@ Built with a **full-stack architecture**:
 - 🔄 Map Integration (view pets on a map by location)  
 - 🔄 Contact System (message pet owners/finders)  
 - 🔄 Notifications & Favorites  
-
----
-
-## 📂 Project Structure

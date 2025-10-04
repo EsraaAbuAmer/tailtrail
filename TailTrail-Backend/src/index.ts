@@ -1,9 +1,12 @@
 import express, { Application } from "express";
 import cors from "cors";
+import path from "path";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db";
 import authRoutes from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
+import petRoutes from "./routes/petRoutes";
+import uploadRoutes from "./routes/uploadRoutes";
 
 dotenv.config();
 const app: Application = express();
@@ -17,9 +20,8 @@ app.use(cors());
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
-app.post("/test", (req, res) => {
-  res.json({ body: req.body });
-});
+app.use("/api/pets", petRoutes);
+app.use("/api/upload", uploadRoutes);
 
 app.get("/", (_, res) => {
   res.send("TailTrail Pets API is running!");
