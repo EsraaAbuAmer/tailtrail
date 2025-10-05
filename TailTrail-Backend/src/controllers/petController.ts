@@ -228,3 +228,70 @@ export const resolvePet = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+export const getNearbyPets = async (req: Request, res: Response) => {
+  try {
+    const { lng, lat, distance = 5000, type, status } = req.query;
+
+    if (!lng || !lat) {
+      return res.status(400).json({ message: "lng and lat are required" });
+    }
+
+    const lngNum = Number(lng);
+    const latNum = Number(lat);
+    const maxDist = Number(distance);
+
+    const pipeline: any[] = [
+      {
+        $geoNear: {
+          near: { type: "Point", coordinates: [lngNum, latNum] },
+          distanceField: "distanceInMeters",
+          maxDistance: maxDist,
+          spherical: true,
+          query: { isDeleted: false },
+        },
+      },
+      { $limit: 50 },
+      {
+        $lookup: {
+          from: "users",
+          localField: "createdBy",
+          foreignField: "_id",
+          as: "createdBy",
+        },
+      },
+      { $unwind: "$createdBy" },
+      {
+        $project: {
+          name: 1,
+          type: 1,
+          status: 1,
+          description: 1,
+          photos: 1,
+          location: 1,
+          "createdBy.name": 1,
+          "createdBy.phone": 1,
+          "createdBy.city": 1,
+          "createdBy.country": 1,
+          distanceInKm: {
+            $round: [{ $divide: ["$distanceInMeters", 1000] }, 2],
+          },
+        },
+      },
+    ];
+
+    if (type) pipeline[0].$geoNear.query.type = type;
+    if (status) pipeline[0].$geoNear.query.status = status;
+
+    const pets = await Pet.aggregate(pipeline);
+
+    res.json({
+      count: pets.length,
+      pets,
+    });
+  } catch (error) {
+    console.error("❌ getNearbyPets error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+

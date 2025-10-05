@@ -9,6 +9,7 @@ import {
   updatePet,
   deletePet,
   resolvePet,
+  getNearbyPets,
 } from "../controllers/petController";
 import upload from "../middlewares/upload";
 
@@ -32,7 +33,7 @@ petRoutes.post(
   validate,
   createPet
 );
-
+petRoutes.get("/near", getNearbyPets);
 petRoutes.get("/", getPets);
 petRoutes.get("/:id", getPetById);
 petRoutes.put(
