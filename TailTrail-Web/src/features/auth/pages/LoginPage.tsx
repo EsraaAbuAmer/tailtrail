@@ -1,23 +1,17 @@
 import { useState } from 'react';
-import {
-  Box,
-  FormControlLabel,
-  Checkbox,
-  Typography,
-  Link,
-  Alert,
-  CircularProgress,
-} from '@mui/material';
+import { Box, FormControlLabel, Checkbox, Typography, Link } from '@mui/material';
 import { AuthLayout } from '../../../components/common/AuthLayout/AuthLayout';
 import { TextField } from '../../../components/common/TextField/TextField';
 import { PrimaryButton } from '../../../components/common/PrimaryButton/PrimaryButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../store/store';
 import { login } from '../../../store/slices/authSlice';
+import { useNavigate } from 'react-router-dom';
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: '', password: '', remember: false });
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const { loading, error, token } = useSelector((state: RootState) => state.auth);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,7 +21,16 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await dispatch(login({ email: form.email, password: form.password }));
+
+    try {
+      const result = await dispatch(login({ email: form.email, password: form.password })).unwrap();
+
+      if (result.token) {
+        navigate('/');
+      }
+    } catch (err) {
+      console.error('Login failed:', err);
+    }
   };
 
   return (
