@@ -24,6 +24,15 @@ const initialState: AuthState = {
   error: null,
 };
 
+interface SignupPayload {
+  name: string;
+  email: string;
+  password: string;
+  phone: string;
+  country: string;
+  city: string;
+}
+
 export const login = createAsyncThunk(
   'auth/login',
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
@@ -32,6 +41,18 @@ export const login = createAsyncThunk(
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Login failed. Please try again.');
+    }
+  },
+);
+
+export const signupUser = createAsyncThunk(
+  'auth/signupUser',
+  async (userData: SignupPayload, { rejectWithValue }) => {
+    try {
+      const { data } = await axiosClient.post('auth/signup', userData);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Signup failed');
     }
   },
 );
@@ -61,9 +82,21 @@ const authSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(signupUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(signupUser.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(signupUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });
 
 export const { logout } = authSlice.actions;
+
 export default authSlice.reducer;
