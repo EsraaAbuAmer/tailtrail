@@ -1,19 +1,19 @@
-import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
-import { fetchUserProfile } from '../../../store/slices/userSlice';
+import { Header } from '../../../components/layout/Header/Header';
+import { Container, Box, Typography } from '@mui/material';
 
 export default function HomePage() {
-  const dispatch = useAppDispatch();
-  const { user, loading } = useAppSelector((state) => state.user);
-
-  useEffect(() => {
-    dispatch(fetchUserProfile());
-  }, [dispatch]);
-
   return (
-    <div>
-      {loading && <p>Loading...</p>}
-      {user && <h2>Welcome, {user.name}!</h2>}
-    </div>
+    <>
+      <Header />
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        {/* You can replace this with your search bar + filters grid next */}
+        <Box>
+          <Typography variant="h5" fontWeight={700} mb={2}>
+            Recently Reported Pets
+          </Typography>
+          {/* 🔜 Pet grid will go here */}
+        </Box>
+      </Container>
+    </>
   );
 }
