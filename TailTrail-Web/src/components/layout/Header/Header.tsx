@@ -41,7 +41,7 @@ export const Header = () => {
           {/* Brand */}
           <Box component={RouterLink} to="/" sx={brandWrapStyle}>
             <Box component="img" src={logo} alt="TailTrail logo" sx={logoStyle} />
-            <Typography sx={brandTextStyle}>TailTrail</Typography>
+            <Typography sx={brandTextStyle}>Tail Trail</Typography>
           </Box>
 
           {/* Nav (desktop) */}
