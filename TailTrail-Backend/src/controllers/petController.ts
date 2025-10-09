@@ -231,8 +231,20 @@ export const resolvePet = async (req: AuthRequest, res: Response) => {
 
 export const getNearbyPets = async (req: Request, res: Response) => {
   try {
-    const { lng, lat, distance = 5000, type, status } = req.query;
+    const {
+      lng,
+      lat,
+      distance = 5000, // default 5km
+      type,
+      status,
+      search,
+      country,
+      city,
+      page = 1,
+      limit = 10,
+    } = req.query;
 
+    // 🧭 Validate coordinates
     if (!lng || !lat) {
       return res.status(400).json({ message: "lng and lat are required" });
     }
@@ -240,6 +252,22 @@ export const getNearbyPets = async (req: Request, res: Response) => {
     const lngNum = Number(lng);
     const latNum = Number(lat);
     const maxDist = Number(distance);
+    const skip = (Number(page) - 1) * Number(limit);
+
+    // 🧱 Base query used inside $geoNear
+    const geoQuery: any = { isDeleted: false };
+
+    if (type) geoQuery.type = type;
+    if (status) geoQuery.status = status;
+    if (country) geoQuery["location.country"] = country;
+    if (city) geoQuery["location.city"] = city;
+
+    if (search) {
+      geoQuery.$or = [
+        { name: { $regex: search as string, $options: "i" } },
+        { description: { $regex: search as string, $options: "i" } },
+      ];
+    }
 
     const pipeline: any[] = [
       {
@@ -248,10 +276,9 @@ export const getNearbyPets = async (req: Request, res: Response) => {
           distanceField: "distanceInMeters",
           maxDistance: maxDist,
           spherical: true,
-          query: { isDeleted: false },
+          query: geoQuery,
         },
       },
-      { $limit: 50 },
       {
         $lookup: {
           from: "users",
@@ -276,16 +303,33 @@ export const getNearbyPets = async (req: Request, res: Response) => {
           distanceInKm: {
             $round: [{ $divide: ["$distanceInMeters", 1000] }, 2],
           },
+          createdAt: 1,
+        },
+      },
+      { $sort: { createdAt: -1 } },
+      {
+        $facet: {
+          metadata: [{ $count: "total" }],
+          data: [{ $skip: skip }, { $limit: Number(limit) }],
+        },
+      },
+      {
+        $project: {
+          data: 1,
+          total: { $ifNull: [{ $arrayElemAt: ["$metadata.total", 0] }, 0] },
         },
       },
     ];
 
-    if (type) pipeline[0].$geoNear.query.type = type;
-    if (status) pipeline[0].$geoNear.query.status = status;
-
-    const pets = await Pet.aggregate(pipeline);
+    const result = await Pet.aggregate(pipeline);
+    const pets = result[0]?.data || [];
+    const total = result[0]?.total || 0;
 
     res.json({
+      page: Number(page),
+      limit: Number(limit),
+      total,
+      pages: Math.ceil(total / Number(limit)),
       count: pets.length,
       pets,
     });
@@ -294,4 +338,3 @@ export const getNearbyPets = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
