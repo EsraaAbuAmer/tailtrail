@@ -8,4 +8,6 @@ export interface PetFilters {
   city: string;
   distance: number; // meters
   sortBy: SortBy;
+  lat?: number;
+  lng?: number;
 }

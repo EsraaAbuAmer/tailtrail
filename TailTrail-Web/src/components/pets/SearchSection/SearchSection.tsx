@@ -22,7 +22,6 @@ export const SearchSection = () => {
 
   return (
     <Box sx={searchContainer}>
-      {/* Search input */}
       <Box sx={searchInputWrapper}>
         <SearchIcon sx={searchIconStyle} />
         <InputBase
@@ -33,8 +32,6 @@ export const SearchSection = () => {
           onChange={(e) => setFilter('search', e.target.value)}
         />
       </Box>
-
-      {/* Filters */}
       <Box sx={filtersWrapper}>
         <FilterMenu
           label="Type"
@@ -42,8 +39,6 @@ export const SearchSection = () => {
           value={filters.type}
           onChange={(v) => (v ? setFilter('type', v) : clearFilter('type'))}
         />
-
-        {/* Location opens modal */}
         <FilterOpener
           label="Location"
           value={locationLabel}
@@ -85,7 +80,6 @@ export const SearchSection = () => {
         />
       </Box>
 
-      {/* Location Modal */}
       <LocationFilterModal
         open={locationOpen}
         onClose={() => setLocationOpen(false)}

@@ -8,7 +8,6 @@ import { gridContainerStyle, loadingStyle, emptyTextStyle } from './PetGrid.styl
 export const PetGrid = () => {
   const dispatch = useAppDispatch();
   const { pets, loading, error } = useAppSelector((state) => state.pets);
-  console.log('pets', pets);
   useEffect(() => {
     dispatch(fetchPets());
   }, [dispatch]);

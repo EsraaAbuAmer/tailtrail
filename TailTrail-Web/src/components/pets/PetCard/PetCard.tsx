@@ -8,7 +8,6 @@ interface PetCardProps {
 
 export const PetCard = ({ pet }: PetCardProps) => {
   const image = pet.photos?.[0].url || 'https://via.placeholder.com/400x300?text=No+Image';
-  console.log('pet image', image.url);
   return (
     <Card sx={cardStyle}>
       <Box position="relative">

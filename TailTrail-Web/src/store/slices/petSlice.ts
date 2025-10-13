@@ -8,25 +8,66 @@ interface PetsState {
   error: string | null;
 }
 
+interface FilterParams {
+  type?: string;
+  status?: string;
+  country?: string;
+  city?: string;
+  distance?: number;
+  lat?: number;
+  lng?: number;
+  sortBy?: string;
+  useNearby?: boolean;
+}
+
 const initialState: PetsState = {
   pets: [],
   loading: false,
   error: null,
 };
 
-export const fetchPets = createAsyncThunk('pets/fetchPets', async (_, { rejectWithValue }) => {
-  try {
-    const { data } = await axiosClient.get('/pets');
-    return data.pets || [];
-  } catch (err: any) {
-    return rejectWithValue(err.response?.data?.message || 'Failed to load pets');
-  }
-});
+export const fetchPets = createAsyncThunk(
+  'pets/fetchPets',
+  async (filters: FilterParams = {}, { rejectWithValue }) => {
+    try {
+      const { useNearby, ...rest } = filters;
+
+      const query = Object.fromEntries(
+        Object.entries(rest)
+          .filter(([_, value]) => value !== '' && value !== undefined && value !== null)
+          .map(([key, value]) => {
+            if (key.toLowerCase() === 'country') {
+              return [key, value];
+            }
+            return [key.toLowerCase(), typeof value === 'string' ? value.toLowerCase() : value];
+          }),
+      );
+
+      console.log('📡 Fetching pets with query:', query);
+
+      const url = useNearby ? '/pets/near' : '/pets';
+      const { data } = await axiosClient.get(url, { params: query });
+
+      console.log('✅ Pets fetched:', data);
+      return data.pets || [];
+    } catch (err: any) {
+      console.error('❌ fetchPets error:', err);
+      return rejectWithValue(err.response?.data?.message || 'Failed to load pets');
+    }
+  },
+);
 
 const petsSlice = createSlice({
   name: 'pets',
   initialState,
-  reducers: {},
+  reducers: {
+    setFilters: (state, action) => {
+      state.filters = { ...state.filters, ...action.payload };
+    },
+    clearFilters: (state) => {
+      state.filters = {};
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchPets.pending, (state) => {
@@ -44,4 +85,5 @@ const petsSlice = createSlice({
   },
 });
 
+export const { setFilters, clearFilters } = petsSlice.actions;
 export default petsSlice.reducer;

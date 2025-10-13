@@ -23,6 +23,8 @@ export const createPet = async (req: AuthRequest, res: Response) => {
       url: file.path,
       public_id: file.filename,
     }));
+    const parsedLocation = JSON.parse(location);
+    const [lat, lng] = parsedLocation.coordinates;
 
     const newPet = new Pet({
       name,
@@ -32,7 +34,7 @@ export const createPet = async (req: AuthRequest, res: Response) => {
       status: status || "lost",
       location: {
         type: "Point",
-        coordinates: JSON.parse(location).coordinates,
+        coordinates: [lng, lat],
         city,
         country,
       },
@@ -66,9 +68,12 @@ export const getPets = async (req: Request, res: Response) => {
     if (city) query["location.city"] = city;
     if (country) query["location.country"] = country;
     if (search) {
+      const searchRegex = { $regex: search as string, $options: "i" };
       query.$or = [
-        { name: { $regex: search as string, $options: "i" } },
-        { description: { $regex: search as string, $options: "i" } },
+        { name: searchRegex },
+        { description: searchRegex },
+        { "location.city": searchRegex },
+        { "location.country": searchRegex },
       ];
     }
     const skip = (Number(page) - 1) * Number(limit);
@@ -244,7 +249,6 @@ export const getNearbyPets = async (req: Request, res: Response) => {
       limit = 10,
     } = req.query;
 
-    // 🧭 Validate coordinates
     if (!lng || !lat) {
       return res.status(400).json({ message: "lng and lat are required" });
     }
@@ -254,7 +258,6 @@ export const getNearbyPets = async (req: Request, res: Response) => {
     const maxDist = Number(distance);
     const skip = (Number(page) - 1) * Number(limit);
 
-    // 🧱 Base query used inside $geoNear
     const geoQuery: any = { isDeleted: false };
 
     if (type) geoQuery.type = type;
@@ -263,9 +266,12 @@ export const getNearbyPets = async (req: Request, res: Response) => {
     if (city) geoQuery["location.city"] = city;
 
     if (search) {
+      const searchRegex = { $regex: search as string, $options: "i" };
       geoQuery.$or = [
-        { name: { $regex: search as string, $options: "i" } },
-        { description: { $regex: search as string, $options: "i" } },
+        { name: searchRegex },
+        { description: searchRegex },
+        { "location.city": searchRegex },
+        { "location.country": searchRegex },
       ];
     }
 
