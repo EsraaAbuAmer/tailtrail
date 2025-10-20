@@ -11,12 +11,22 @@ export const PetCard = ({ pet }: PetCardProps) => {
   return (
     <Card sx={cardStyle}>
       <Box position="relative">
-        <CardMedia component="img" height="200" image={image} alt={pet.name} />
+        <CardMedia
+          component="img"
+          image={image}
+          alt={pet.name}
+          sx={{
+            width: '100%',
+            height: 200,
+            objectFit: 'cover',
+            objectPosition: 'center',
+          }}
+        />
         <Box sx={badgeStyle(pet.status)}>{pet.status.toUpperCase()}</Box>
       </Box>
 
-      <CardContent>
-        <Typography variant="h6" fontWeight={700}>
+      <CardContent sx={{ flexGrow: 1 }}>
+        <Typography variant="h6" fontWeight={700} noWrap>
           {pet.name}
         </Typography>
         <Typography
@@ -25,14 +35,17 @@ export const PetCard = ({ pet }: PetCardProps) => {
           display="flex"
           alignItems="center"
           mt={0.5}
+          noWrap
         >
           📍 {pet.location.city}, {pet.location.country}
         </Typography>
+      </CardContent>
 
+      <Box px={2} pb={2}>
         <Button variant="contained" fullWidth sx={buttonStyle}>
           View Details
         </Button>
-      </CardContent>
+      </Box>
     </Card>
   );
 };

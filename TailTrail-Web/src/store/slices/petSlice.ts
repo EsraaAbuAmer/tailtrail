@@ -42,9 +42,6 @@ export const fetchPets = createAsyncThunk(
             return [key.toLowerCase(), typeof value === 'string' ? value.toLowerCase() : value];
           }),
       );
-
-      console.log('📡 Fetching pets with query:', query);
-
       const url = useNearby ? '/pets/near' : '/pets';
       const { data } = await axiosClient.get(url, { params: query });
 

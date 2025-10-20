@@ -1,36 +1,42 @@
 import { SxProps, Theme } from '@mui/material';
 
-export const cardStyle: SxProps<Theme> = {
-  borderRadius: 2,
-  overflow: 'hidden',
-  boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-  transition: '0.3s',
-  backgroundColor: 'background.paper',
+export const cardStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  height: 360,
+  borderRadius: 1,
+  boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
   '&:hover': {
     transform: 'translateY(-4px)',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+    boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
   },
 };
 
-export const badgeStyle = (status: string): SxProps<Theme> => ({
+export const badgeStyle = (status: string) => ({
   position: 'absolute',
-  top: 10,
-  left: 10,
-  bgcolor: status === 'Lost' ? 'error.main' : 'success.main',
+  top: 8,
+  left: 8,
+  backgroundColor:
+    status.toLowerCase() === 'lost'
+      ? '#ec7813'
+      : status.toLowerCase() === 'found'
+        ? 'rgba(16,185,129,0.9)'
+        : 'gray',
   color: 'white',
-  px: 1.5,
-  py: 0.5,
-  borderRadius: '9999px',
-  fontSize: '0.75rem',
   fontWeight: 600,
+  borderRadius: '12px',
+  padding: '4px 10px',
+  fontSize: '0.75rem',
 });
 
-export const buttonStyle: SxProps<Theme> = {
+export const buttonStyle = {
   mt: 2,
-  borderRadius: '0.75rem',
-  fontWeight: 600,
-  backgroundColor: 'primary.main',
+  backgroundColor: '#ec7813',
+  textTransform: 'none',
+  fontWeight: 700,
   '&:hover': {
-    backgroundColor: 'primary.dark',
+    backgroundColor: '#d46a0f',
   },
 };
