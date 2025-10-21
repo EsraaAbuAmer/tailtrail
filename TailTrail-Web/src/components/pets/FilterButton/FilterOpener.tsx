@@ -15,7 +15,7 @@ export const FilterOpener = ({ label, value, onOpen, onClear }: FilterOpenerProp
   return (
     <Box
       component="button"
-      onClick={!active ? onOpen : undefined}
+      onClick={onOpen}
       style={{ cursor: 'pointer', border: 'none', background: 'none', padding: 0 }}
     >
       <Box sx={filterButtonStyle(active)} display="flex" alignItems="center" gap={1} px={2} py={1}>

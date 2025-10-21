@@ -1,12 +1,5 @@
 import { useState } from 'react';
-import {
-  Menu,
-  MenuItem,
-  ListItemText,
-  Box,
-  Typography,
-  IconButton,
-} from '@mui/material';
+import { Menu, MenuItem, ListItemText, Box, Typography, IconButton } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CloseIcon from '@mui/icons-material/Close';
 import { menuPaperStyle, menuItemStyle } from './FilterMenu.styles';
@@ -35,7 +28,7 @@ export const FilterMenu = ({ label, options, value, onChange }: FilterMenuProps)
   };
 
   const handleClear = (e: React.MouseEvent) => {
-    e.stopPropagation(); // don’t reopen menu
+    e.stopPropagation();
     onChange?.(null);
   };
 
@@ -43,7 +36,7 @@ export const FilterMenu = ({ label, options, value, onChange }: FilterMenuProps)
     <Box>
       <Box
         component="button"
-        onClick={value ? undefined : handleClick}
+        onClick={handleClick}
         style={{ cursor: 'pointer', border: 'none', background: 'none', padding: 0 }}
       >
         <Box
@@ -59,11 +52,7 @@ export const FilterMenu = ({ label, options, value, onChange }: FilterMenuProps)
           </Typography>
 
           {value ? (
-            <IconButton
-              size="small"
-              onClick={handleClear}
-              sx={{ color: 'primary.main', p: 0 }}
-            >
+            <IconButton size="small" onClick={handleClear} sx={{ color: 'primary.main', p: 0 }}>
               <CloseIcon sx={{ fontSize: 16 }} />
             </IconButton>
           ) : (

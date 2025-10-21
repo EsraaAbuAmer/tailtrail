@@ -45,10 +45,33 @@ export const usePetFilters = () => {
       return;
     }
 
-    const success = (pos: GeolocationPosition) => {
+    const success = async (pos: GeolocationPosition) => {
       const { latitude, longitude } = pos.coords;
       console.log('📍 Real location detected:', latitude, longitude);
-      setFilters((prev) => ({ ...prev, lat: latitude, lng: longitude }));
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
+        );
+        const data = await res.json();
+        const country = data.address?.country || '';
+        const city =
+          data.address?.city ||
+          data.address?.town ||
+          data.address?.village ||
+          data.address?.state_district ||
+          '';
+
+        setFilters((prev) => ({
+          ...prev,
+          lat: latitude,
+          lng: longitude,
+          country,
+          city,
+        }));
+      } catch (err) {
+        console.warn('Reverse geocode failed:', err);
+        setFilters((prev) => ({ ...prev, lat: latitude, lng: longitude }));
+      }
       setGeoTried(true);
     };
 
@@ -82,7 +105,21 @@ export const usePetFilters = () => {
   };
 
   const clearFilter = (key: keyof PetFilters) => {
-    setFilters((prev) => ({ ...prev, [key]: DEFAULT_FILTERS[key] }));
+    setFilters((prev) => {
+      const newFilters = { ...prev, [key]: DEFAULT_FILTERS[key] };
+      if (key === 'country' || key === 'city') {
+        return {
+          ...DEFAULT_FILTERS,
+          ...prev,
+          country: '',
+          city: '',
+          lat: undefined,
+          lng: undefined,
+        };
+      }
+
+      return newFilters;
+    });
   };
 
   const applyLocation = (country: string, city: string, distance: number) => {
