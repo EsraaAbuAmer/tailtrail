@@ -17,6 +17,11 @@ export const createPet = async (req: AuthRequest, res: Response) => {
         .json({ message: "At least one photo is required" });
     }
 
+    if (!type) return res.status(400).json({ message: "Pet type is required" });
+
+    if (!location)
+      return res.status(400).json({ message: "Location is required" });
+
     const files = req.files as Express.Multer.File[] &
       { path: string; filename: string }[];
     const photos = files.map((file) => ({
@@ -27,7 +32,7 @@ export const createPet = async (req: AuthRequest, res: Response) => {
     const [lat, lng] = parsedLocation.coordinates;
 
     const newPet = new Pet({
-      name,
+      name : name || undefined,
       type,
       description,
       photos,

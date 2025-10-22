@@ -20,7 +20,12 @@ petRoutes.post(
   protect,
   upload.array("photos", 5),
   [
-    body("name").notEmpty().withMessage("Name is required"),
+    body("name").custom((value, { req }) => {
+      if (req.body.status !== "found" && !value) {
+        throw new Error("Name is required for lost pets");
+      }
+      return true;
+    }),
     body("type")
       .isIn(["dog", "cat", "bird", "rabbit", "turtle", "other"])
       .withMessage("Invalid pet type"),

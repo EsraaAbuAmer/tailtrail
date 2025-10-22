@@ -4,6 +4,8 @@ import HomePage from '../features/pets/pages/HomePage';
 import LoginPage from '../features/auth/pages/LoginPage';
 import SignupPage from '../features/auth/pages/SignupPage';
 import { PublicRoute } from './PublicRoute';
+import ReportFoundPage from '../features/pets/pages/ReportFoundPage';
+import ReportLostPage from '../features/pets/pages/ReportLostPage';
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const token = useAppSelector((state) => state.auth.token);
@@ -35,6 +37,22 @@ export const AppRouter = () => {
           element={
             <ProtectedRoute>
               <HomePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pets/report-lost"
+          element={
+            <ProtectedRoute>
+              <ReportLostPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pets/report-found"
+          element={
+            <ProtectedRoute>
+              <ReportFoundPage />
             </ProtectedRoute>
           }
         />

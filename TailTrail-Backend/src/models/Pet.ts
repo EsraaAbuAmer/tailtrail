@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IPet extends Document {
-  name: string;
+  name?: string;
   type: "dog" | "cat" | "bird" | "rabbit" | "turtle" | "other";
   description: string;
   photos: string[];
@@ -19,7 +19,7 @@ export interface IPet extends Document {
 
 const PetSchema: Schema = new Schema(
   {
-    name: { type: String, required: true },
+    name: { type: String },
     type: {
       type: String,
       enum: ["dog", "cat", "bird", "rabbit", "turtle", "other"],
