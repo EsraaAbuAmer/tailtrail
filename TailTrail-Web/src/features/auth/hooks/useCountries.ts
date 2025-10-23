@@ -16,7 +16,12 @@ export const useCountries = () => {
       setLoading(true);
       try {
         const { data } = await axios.get('https://countriesnow.space/api/v0.1/countries');
-        if (data.data) setCountries(data.data);
+        if (data.data) {
+          const updatedCountries = data.data.map((country) =>
+            country.country === 'Israel' ? { ...country, country: 'Palestine' } : country,
+          );
+          setCountries(updatedCountries);
+        }
       } catch (err) {
         console.error('Error fetching countries:', err);
       } finally {

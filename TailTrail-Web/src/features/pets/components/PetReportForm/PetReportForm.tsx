@@ -14,6 +14,8 @@ import {
   actionsRow,
 } from './PetReportForm.styles';
 import { useCountries } from '../../../auth/hooks/useCountries';
+import { ImageUploader } from '../../../../components/common/ImageUploader/ImageUploader';
+import { MapPicker } from '../../../../components/common/MapPicker/MapPicker';
 
 type Mode = 'lost' | 'found';
 
@@ -160,6 +162,31 @@ export const PetReportForm = ({ mode, onSubmitForm, value }: PetReportFormProps)
           </TextField>
           <Box />
         </Box>
+
+        {/* Image uploader */}
+        <Box sx={fullRow} mt={2}>
+          <Typography variant="subtitle1" fontWeight={600} mb={1}>
+            Upload Pet Photos
+          </Typography>
+          <ImageUploader
+            maxFiles={5}
+            onChange={(files) => {
+              console.log('Selected files:', files);
+              // later: store them in a state or append to FormData
+            }}
+          />
+        </Box>
+
+        {mode === 'found' && (
+          <Box sx={fullRow} mt={2}>
+            <MapPicker
+              onSelectLocation={(coords) => {
+                console.log('Selected map location:', coords);
+                // later: store lat/lng in your form state before submit
+              }}
+            />
+          </Box>
+        )}
 
         {/* Description */}
         <Box sx={fullRow}>

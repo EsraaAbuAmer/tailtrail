@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { store } from './store/store';
 import { theme } from './theme/theme';
 import { SnackbarProvider } from 'notistack';
+import 'leaflet/dist/leaflet.css';
 import App from './App';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

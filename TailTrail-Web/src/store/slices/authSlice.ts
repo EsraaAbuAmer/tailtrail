@@ -57,6 +57,11 @@ export const signupUser = createAsyncThunk(
   },
 );
 
+export const fetchUserProfile = createAsyncThunk('auth/fetchUserProfile', async () => {
+  const { data } = await axiosClient.get('/users/me');
+  return data;
+});
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -93,6 +98,20 @@ const authSlice = createSlice({
       .addCase(signupUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(fetchUserProfile.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchUserProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(fetchUserProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+        // If token expired or invalid, clear it
+        state.token = null;
+        localStorage.removeItem('token');
       });
   },
 });

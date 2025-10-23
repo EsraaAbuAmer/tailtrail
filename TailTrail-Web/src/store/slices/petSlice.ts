@@ -44,8 +44,6 @@ export const fetchPets = createAsyncThunk(
       );
       const url = useNearby ? '/pets/near' : '/pets';
       const { data } = await axiosClient.get(url, { params: query });
-
-      console.log('✅ Pets fetched:', data);
       return data.pets || [];
     } catch (err: any) {
       console.error('❌ fetchPets error:', err);

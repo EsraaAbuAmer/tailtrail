@@ -47,7 +47,6 @@ export const usePetFilters = () => {
 
     const success = async (pos: GeolocationPosition) => {
       const { latitude, longitude } = pos.coords;
-      console.log('📍 Real location detected:', latitude, longitude);
       try {
         const res = await fetch(
           `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
